@@ -1,0 +1,11 @@
+i banana
+i apple
+i candy
+p
+r banana
+p 
+r candy
+p
+r apple
+p
+q
