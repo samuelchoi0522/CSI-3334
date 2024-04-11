@@ -1,0 +1,28 @@
+skipping process id 0 at 0
+skipping process id 1 at 1
+running process id 2 at 2
+a
+running process id 3 at 12
+longer
+running process id 4 at 37
+set
+skipping process id 5 at 42
+skipping process id 6 at 43
+skipping process id 7 at 44
+running process id 8 at 45
+formatted
+skipping process id 9 at 90
+skipping process id 10 at 91
+skipping process id 11 at 92
+skipping process id 12 at 93
+skipping process id 13 at 94
+skipping process id 14 at 95
+skipping process id 15 at 96
+skipping process id 16 at 97
+skipping process id 17 at 98
+skipping process id 18 at 99
+running process id 19 at 100
+line
+final clock is                 200
+number of processes run is     5
+number of processes skipped is 15

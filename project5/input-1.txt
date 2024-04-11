@@ -1,0 +1,103 @@
+20
+0 10 15 This
+1 20 20 is
+2 30 10 a
+3 40 25 longer
+4 50 5 set
+5 60 30 of
+6 70 35 test
+7 80 40 inputs
+8 90 45 formatted
+9 100 50 according
+10 110 55 to
+11 120 60 your
+12 130 65 requested
+13 140 70 style
+14 150 75 with
+15 160 80 more
+16 170 85 items
+17 180 90 in
+18 190 95 each
+19 200 100 line
+
+
+4
+4 46 39 a
+29 62 11 b
+40 45 4 c
+87 129 25 d
+
+
+
+5
+0 10 10 id zero
+10 20 10 id one
+10 30 10 id two
+10 40 10 id three
+11 25 5 id four
+
+
+4
+0 10 5 task one
+5 20 6 task two
+15 30 4 task three
+18 25 3 task four
+
+
+8
+0 10 5 A
+5 15 3 B
+10 20 7 C
+15 25 4 D
+20 30 6 E
+25 35 8 F
+30 40 2 G
+35 45 9 H
+
+
+3
+0 10 5 X
+20 30 7 Y
+40 50 6 Z
+
+
+9
+0 10 3 apple
+2 12 4 banana
+4 14 2 cherry
+6 16 5 date
+8 18 1 elderberry
+10 20 6 fig
+12 22 3 grape
+14 24 7 honeydew
+16 26 4 kiwi
+
+
+10
+0 5 2 A
+1 10 4 B
+2 15 3 C
+3 20 5 D
+4 25 6 E
+5 30 4 F
+6 35 7 G
+7 40 3 H
+8 45 8 I
+9 50 6 J
+
+
+8
+0 5 3 X
+1 10 6 Y
+2 15 4 Z
+3 20 7 W
+4 25 5 V
+5 30 8 U
+6 35 6 T
+7 40 9 S
+
+
+3
+0 10 5 P
+1 15 6 Q
+2 20 7 R

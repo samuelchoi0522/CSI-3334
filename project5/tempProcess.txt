@@ -1,0 +1,72 @@
+#include "process-proj5.h"
+
+Process::Process(int theId){
+    id = theId;
+    submissionTime = 0;
+    deadline = 0;
+    requiredTime = 0;
+    information = "";
+}
+
+int Process::run(int currentSystemTime) const{
+    cout << "running process id " << id << " at " << currentSystemTime << endl;
+    cout << information << endl;
+    return currentSystemTime + requiredTime;
+}
+
+bool Process::canComplete(int currentSystemTime) const{
+    return (currentSystemTime + requiredTime) <= deadline;
+}
+
+int Process::getId() const{
+    return id;
+}
+
+/////////////////////////////////////////////////////////////
+
+//delete
+
+int Process::getDeadline() const{
+    return deadline;
+}
+
+int Process::getRequiredTime() const{
+    return requiredTime;
+}
+
+string Process::getInformation() const{
+    return information;
+}
+// delete this
+ostream &operator<<(ostream &os, Process &p){
+    os << p.getSubmissionTime() << " " << p.getDeadline() << " " << p.getRequiredTime() << " " << p.getInformation();
+    return os;
+}
+
+/////////////////////////////////////////////////////////
+
+int Process::getSubmissionTime() const{
+    return submissionTime;
+}
+
+bool Process::operator<(Process const &p) const{
+    if (deadline != p.deadline){
+        return deadline < p.deadline;
+    }
+
+    if (requiredTime != p.requiredTime){
+        return requiredTime < p.requiredTime;
+    }
+
+    return id < p.id;
+}
+
+istream &operator>>(istream &is, Process &p){
+    is >> p.submissionTime;
+    is >> p.deadline;
+    is >> p.requiredTime;
+
+    getline(is >> ws, p.information);
+
+    return is;
+}
