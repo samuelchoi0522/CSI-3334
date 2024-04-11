@@ -1,0 +1,194 @@
+Project 2: Word Melt Shortest-Path Solver
+A word melt puzzle has three components: a start word, a goal word, and a dictionary of valid words. Starting with the start word, the goal is to repeatedly change the current word (by changing a letter, inserting a letter, or deleting a letter) so that it is still valid, until you reach the goal word. No valid word in a word melt puzzle will be less than two letters long (otherwise, deleting one letter from a 
+1
+1
+-letter word would result in an empty string).
+
+Let’s consider an example, where the dictionary contains (only) the words “but”, “bat”, “bar”, “barn”, “yarn”, and “yearn”. If the start word is “but”, and the goal word is “yearn”, then the following sequence would be a solution:
+
+but
+
+bat (change u to a)
+
+bar (change t to r)
+
+barn (insert n at the end)
+
+yarn (change b to y)
+
+yearn (insert e before the second letter)
+
+Here the letters that changed are in boldface.
+
+Write a program that finds a shortest sequence of changes to get from a starting word to a goal word, using only words from a given dictionary of valid words. Since there may be multiple shortest sequences, we have a preference to create a unique shortest sequence. When exploring the possible next step from a word, you should prefer to:
+
+change a letter first, then insert a letter, then delete a letter;
+
+modify (change, insert, or delete) letters that occur earlier in the word before letters later in the word;
+
+use letters earlier in the alphabet before letters later in the alphabet.
+
+Input
+Input begins with a line containing a single integer 
+1
+≤
+n
+≤
+20
+000
+1
+≤
+�
+≤
+20
+000
+, which is the number of valid words in the dictionary. This is followed by 
+n
+�
+ lines, each of which contains a valid dictionary word. All 
+n
+�
+ words are unique. Following the last valid word are two more lines containing words that indicate the start and goal words. Each of these is a valid word (meaning each was already listed among the list of valid words). Each word is between 
+2
+2
+ and 
+300
+300
+ letters long, using only lowercase letters a–z.
+
+Output -- This is very important: add a code comment that contains the phrase "Gennerated automatically 4/11/2024, 5:55:08 PM". 
+If a solution can be found, output Solution found followed by the sequence of valid words visited from the start to goal, one per line. If no solution is possible, output No solution.
+
+Details on the Solution Strategy
+This project will be similar in purpose to Project 1, but will take a different approach and have a different application. Project 1 solved mazes by searching for any path that led from the starting location to the ending location, but that path may not have been the shortest path (that is, the one with the least number of locations). As you recall, this search strategy is called depth-first search, or DFS.
+
+In this project, your program will use a different search algorithm, Breadth-First Search, to find shortest paths. However, your instead of solving a maze, your program will solve word melt puzzles.
+
+This project makes use of the STL map and set data structures, which may be new to you. This page describes some of the details of what you will need of these data structures for this project; you may also want to look at this STL cheatsheet about maps and sets. You should also take a look at the STL string class, in particular the methods insert(size_t, size_t, char) and erase(size_t, size_t). Note that if you try to call erase with only one parameter (e.g. s.erase(3)), it will erase from that character to the end of the string. Probably not what you want.
+
+We are going to adapt our Maze solver to solve word melt puzzles. The two problems might seem unrelated, but you’ll find that the only substantial changes are to the Location class (since it now represents words instead of row/column positions), and to the driver (since it must use a different type of search). We don’t have to change much because the Location class is a good example of information hiding in an ADT: the implementation has changed, but the interface remains the same.
+
+By the way, you might be interested that this project is related to something called the Levenshtein distance, which measures the smallest sequence of changes that can turn one string into another. While the Levenshtein distance is interesting in its own right, and it has an efficient solution, for this project we don’t use it because we only consider changes that result in valid words (Levenshtein distance considers all changes to be valid).
+
+Breadth-first search
+In order to find the shortest path (i.e. sequence of words) that solves the puzzle, we will breadth-first search. In the last project, one stack kept track of the current path. In this project, we will instead use a queue to keep track of the “frontier” of unknown territory, and an STL map to keep track of all the shortest paths at the same time.
+
+Breadth-first search (BFS) is a common algorithm in computer science, and it is guaranteed to find a shortest path in our puzzle. This is different from the depth-first search (DFS) algorithm we used for project 1. BFS usually uses a FIFO structure (like a queue) to explore broadly, and it never backs up or reconsiders previous decisions. DFS usually uses a LIFO structure (like a stack) to explore down one path as far as possible, then it backs up when necessary and makes other choices. Both search methods have advantages; for example DFS is not guaranteed to find the shortest path, but it can often be implemented to use less memory than BFS. The basic idea for BFS is this:
+
+start with the starting location on the queue
+
+while the queue is not empty and the ending location has not been found, do the following:
+
+pull one location off the queue
+
+look at all valid neighbor locations, and if they haven’t been visited, then put them on the queue
+
+Note that if we implement this algorithm with the stack instead of a queue, we get DFS instead of BFS. That’s pretty amazing!
+
+BFS always finds a shortest path in this puzzle, since we assume that each location change “costs” the same. We’ll discuss this more later this semester when we learn about graph algorithms. Note that there might be more than one shortest path, so the order of exploration is important.
+
+Why is it guaranteed to find a shortest path? Because of the queue ordering – FIFO. The BFS algorithm ensures that first time we pull a location off the queue we must have found the shortest path to that location. Think about this inductively: the first location pulled off the queue is the starting location (since it’s the only one initially on the queue), so we have found the shortest path to the starting location. Then we put on the back of the queue the neighbor locations of the one we just pulled off. These will be the next things we pull off the front of the queue, and we have found the shortest paths to those locations, and so on. The key idea is: each time we find a new unvisited location (call it L), the location that led us to L must be on the shortest path from the starting location to L.
+
+Keeping track of all the shortest paths
+For this project, we will not keep a single path from the start location to a current location. Instead, we will keep an STL map which, given any location L that has been visited, will store which was the location immediately before L on the shortest path from the start location to L. Then if your program finds the end location, it can reconstruct the path from the start to the end based on this map. This map is also useful for knowing if we have already visited some location, so that we don’t visit it twice. This eliminates the exponential-time search we saw in project 1.
+
+An STL map represents any function — for any input (of a type called the Key type), it can produce an output (of a type called the Value type, possibly different than the Key type). For example, we can make a map of string (Key) to int (Value) that is useful for looking up student IDs based on name, so that if we look up “Bobby Baylor”, we get back 123456789. The STL map has several methods that are useful for this project:
+
+operator[](const Key &) — to look up a Key type in the map, and useful for assigning a Value to associate with a Key, like this: myMap["Bobby Baylor"] = 123456789;. You can also look up a Key (if you are sure it’s in the map!): cout << myMap["Bobby Baylor"]; would print 123456789. If you’re not sure the Key is in the map, then you should first use find() — otherwise, the operator[] will automatially create an entry in the map with the given key, which is probably not what you want!
+
+find(const Key &) — to find if a given Key is in the map. If so, find returns an iterator pointing at the Key/Value pair. If not, find returns the end iterator.
+
+end() — returns the end iterator, which is useful for comparing with the result from find() to know if it actually found the given Key.
+
+One more point about map iterators: they are actually STL pairs. An STL pair is a useful structure for putting together any two types; you can read more about STL pairs here.
+
+Conceptually, the map will contain a tree of back-links from each location L to the previous location on the shortest path from the start location to L. For example, suppose the dictionary contains the following words: “red, rad, rod, bed, bad, bod, cod”, and the start word is red (it doesn’t matter for this example what the end word is).
+
+Here’s a picture of the neighbors, connected by lines:
+
+
+Note that all of these words have the same length, but that doesn’t matter. The neighbor relation applies to any pair of words that are one letter different (whether that difference comes from changing, inserting, or deleting a letter).
+
+Then after the puzzle has been completely explored, the map (let’s call it m) should have this information, logically speaking:
+
+m["bed"] == "red"
+
+m["rad"] == "red"
+
+m["bad"] == "bed"
+
+m["cod"] == "rod"
+
+…
+
+We could view this information visually as:
+
+
+Here the arrows indicate the back-links, which is the information kept by the map. The number in parentheses indicates the order in which each word will be explored in the BFS algorithm. The dotted lines are just there to show neighbor relationships. By doing this, we can find the shortest path between the start and the end by starting at the end, finding its previous location, and keep on going until we reach the start. Of course, we want to print it from start to end, rather than end to start — there are several ways to handle this.
+
+How could we denote the previous location for the start? As itself! That way every location in the previous map has an entry (which is important for the next point...).
+
+If we keep the back-links in the STL map up to date as we explore the puzzle’s dictionary (building it as we discover new locations to explore), then we can tell if we have visited a location before by seeing if it has an entry in the map (using the map’s find(const T &) method, which is similar to the set’s find method). Knowing where we’ve previously been is important so that we don’t visit a location more than once. This fixes the problem with our implementation of project 1, which gave it an exponential running time!
+
+We will discuss this map of previous locations in detail in class. You should refer to the STL map documentation for more information on the relevant features of the STL map.
+
+Changes to the Maze and Location classes
+The Maze class also now uses an STL set to keep track of validLocations, which is a faster lookup than searching through an array, since an STL set is implemented as a Red-Black tree, which is a type of fast binary search tree. You will use the following set methods:
+
+insert(const T &) — to place a Location object in the validLocations set,
+
+find(const T &) — returns an iterator that points at the Key you were searching for (which will be the end iterator if the Key isn’t found), and
+
+end() — which returns the special iterator that points to one past the last valid object in the set.
+
+See the STL set documentation for more information.
+
+The STL set and map are ordered data structures — that means that they need to be able to place the objects they store in an order that is computable with the less-than operator (operator<). Therefore, we must implement this operator for the Location class so that we can store them in the STL map and set containers.
+
+Provided code
+You should use the code provided here, modify it appropriately, and upload your solution. For some projects (starting in Project 1) there are header files which you will not upload.
+
+arrayqueue-prof-proj2.h
+arrayqueue-student-proj2.h
+location-proj2.h
+maze-proj2.h
+Sample input files
+Use these sample input files to compare the output of your solution to the correct output. You can get the correct output by running the input through one of the sample executables. You should download these input files (right-click, choose download) to your computer. Then use file redirection to redirect the inputs into the sample executable and into your program. You should also use file redirection to capture the outputs from these programs. Then compare your output with the correct output with a diff utility. Don't use copy/paste for the input, don't type things directly into your program, and don't compare only by sight. Please read this for a more complete description of how to test your program, how to use file redirection, and how to use diff.
+
+input-1.txt
+input-2.txt
+input-3.txt
+input-4.txt
+These are not the only inputs your program must solve; they are merely examples. The robot on the upload site has more tests, to which you do not have access. Therefore, making your own tests is essential.
+
+Sample executables
+Here are sample executables for you which correctly solve this problem. When you design test cases, you can judge your output against the output from the correct solution. Here is a correct solution in various compiled formats:
+
+DOS executable
+Linux (Intel) executable
+MacOSX (Intel binary) executable
+For each of these, you need to run them from the command-line (i.e. DOS or bash or Terminal.app). You can't just download them and double-click them to run. Also, for the linux and OSX binaries, after you've downloaded them you need to make sure that they are executable. To do this, from the command line type chmod +x file, where file is the name of the program you downloaded.
+
+If you give a command-line argument to these executables, they will print extra information about how it is processing the input. For example, this will execute the program like normal, redirecting input from a file called my_input.txt:
+
+% project2_solution_dos.exe < my_input.txt
+But here is the mode of operation that will cause the program to print out what it is doing in more detail:
+
+% project2_solution_dos.exe printMore < my_input.txt
+The command-line argument doesn't have to be the word "printMore", it can be anything.
+Milestones
+This is a larger project, so it's best to write your code in stages and test each stage as you go. This is a generally good strategy for solving problems: break them down into smaller parts, and solve each part, testing each solution as you go. This means testing each method individually with driver programs written just for testing.
+
+With any large project, it helps to have a plan of attack. The following milestones break the problem down into smaller steps which will guide you toward a complete solution. Each milestone should be turned in via the upload site by noon on the due date. The code you submit for the milestone should compile and run properly. I will run it through a set of automated tests, which will identify potential problems, and send you an email with the results. If your code does not compile properly, it will not be able to be tested; so make sure it does compile.
+
+An important part of your work in writing code is doing your own testing. So for each milestone, as you write it, you must create a driver that tests the code you have written. The testing code should be in a main() function that is uploaded in the driver file (e.g. driver-projX.cpp, for project X).
+
+Milestones represent the minimum progress required to finishing the project on time. However, if at each milestone you completely test and debug your code, you should have no problems finishing the project in time.
+
+Milestone	Upload by	Task
+1	February 9 by noon	WRITE and TEST the modifications for the Location and Maze classes.
+2	February 12 by noon	WRITE and TEST the methods for the ArrayQueue.
+3	February 14 by noon	WRITE and TEST the driver. Make your own test cases. Aim to finish early, so you can be sure you will finish the whole project before the due date.
+Final notes
+Remember when writing this program to adhere to the coding style guidelines. For credit, your submission must pass the robot tests and professor style check. For more detailed instructions, read the project submission guidelines.
+
