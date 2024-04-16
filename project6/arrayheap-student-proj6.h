@@ -122,7 +122,7 @@ bool ArrayHeap<T>::isOnHeap(int key) const{
 
 template <typename T>
 void ArrayHeap<T>::changeItemAtKey(int key, T const &newItem){
-    if(!isOnHeap){
+    if(!isOnHeap()){
         return;
     }
     else{
