@@ -26,16 +26,14 @@ int main(){
         if(nameToIndex.find(from) == nameToIndex.end()){
             nameToIndex[from] = reverse.size(); //get index to push to 
             reverse.push_back(from);            //push to reversed list
-            if(from.substr(from.length() - 7) == "_server"){    //get up to_server
+            if(from.length() >= 7 && from.substr(from.length() - 7) == "_server"){    //get up to_server
                 serverNames.push_back(nameToIndex[from]);
             }
         }
-        if(nameToIndex.find(to) == nameToIndex.end()){
-            nameToIndex[to] = reverse.size();
-            reverse.push_back(to);
-            if(to.substr(to.length() - 7) == "_server"){
-                serverNames.push_back(nameToIndex[to]);
-            }
+        else if(nameToIndex.find(to) == nameToIndex.end()){
+            nameToIndex[to] = reverse.size(); //get index to push to 
+            reverse.push_back(to);            //push to reversed list
+            serverNames.push_back(nameToIndex[to]);
         }
         g.addEdge(nameToIndex[from], nameToIndex[to], delay);
     }
@@ -46,7 +44,7 @@ int main(){
         vector<int> numDelays = g.dijkstra(serverIndex);
         int totalDelay = 0;
         bool isValidServer = true;
-        for(int j = 0; j < numVertices; j++){
+        for(int j = 0; j < serverNames.size(); j++){
             if(numDelays[j] == g.INFINITE_COST){
                 isValidServer = false;
                 break;
