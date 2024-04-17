@@ -17,7 +17,6 @@ ArrayHeap<T>::ArrayHeap(){
 
     for(int i = 0; i < capacity; i++){
         heapAndFreeStack[i] = i;
-        dataToHeap[i] = -1;
     }
 }
 
@@ -37,7 +36,7 @@ ArrayHeap<T>::ArrayHeap(ArrayHeap<T> const &h){
     for (int i = 0; i < capacity; i++) {
         heapAndFreeStack[i] = h.heapAndFreeStack[i];
         data[i] = h.data[i];
-        dataToHeap = h.dataToHeap[i];
+        dataToHeap[i] = h.dataToHeap[i];
     }
 }
 
@@ -94,11 +93,8 @@ void ArrayHeap<T>::removeMinItem(){
     if(numItems == 0){
         return;
     }
-
+    swap(dataToHeap[heapAndFreeStack[0]], dataToHeap[heapAndFreeStack[numItems - 1]]);
     swap(heapAndFreeStack[0], heapAndFreeStack[numItems - 1]);
-
-    dataToHeap[heapAndFreeStack[0]] = numItems - 1;
-    dataToHeap[heapAndFreeStack[numItems - 1]] = 0;
 
     numItems--;
 
@@ -122,14 +118,14 @@ bool ArrayHeap<T>::isOnHeap(int key) const{
 
 template <typename T>
 void ArrayHeap<T>::changeItemAtKey(int key, T const &newItem){
-    if(!isOnHeap()){
-        return;
-    }
-    else{
+    if(isOnHeap(key)){
         data[key] = newItem;
 
-        bubbleDown(dataToHeap[key]);
         bubbleUp(dataToHeap[key]);
+        bubbleDown(dataToHeap[key]);
+    }
+    else{
+        return;
     }
 }
 
@@ -172,8 +168,7 @@ void ArrayHeap<T>::bubbleUp(int ndx){
     
     if( data[heapAndFreeStack[ndx]] < data[heapAndFreeStack[parent]]){
         swap(heapAndFreeStack[parent], heapAndFreeStack[ndx]);
-        dataToHeap[heapAndFreeStack[ndx]] = ndx;
-        dataToHeap[heapAndFreeStack[parent]] = parent;
+        swap(dataToHeap[heapAndFreeStack[parent]], dataToHeap[heapAndFreeStack[ndx]]);
 
         bubbleUp(parent);
     }
@@ -200,8 +195,7 @@ void ArrayHeap<T>::bubbleDown(int ndx){
 
     if(min != ndx){
         swap(heapAndFreeStack[ndx], heapAndFreeStack[min]);
-        dataToHeap[heapAndFreeStack[ndx]] = ndx;
-        dataToHeap[heapAndFreeStack[min]] = min;
+        swap(dataToHeap[heapAndFreeStack[ndx]], dataToHeap[heapAndFreeStack[min]]);
         
         bubbleDown(min);
     }

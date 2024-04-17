@@ -22,7 +22,8 @@ vector<int> Graph::dijkstra(int source) const{
         int u = pq.getMinItem().second;
         pq.removeMinItem();
 
-        for(list<Edge>::const_iterator i = adjacencyList[u].begin(); i != adjacencyList[u].end(); i++){
+        for(list<Edge>::const_iterator i = adjacencyList[u].begin(); 
+        i != adjacencyList[u].end(); i++){
             int v = i->to;
             int weight = i->cost;
 

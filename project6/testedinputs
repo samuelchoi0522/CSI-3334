@@ -1,0 +1,68 @@
+4
+waco_server houston_server 1
+houston_server dallas_server 2
+dallas_server austin_server 3
+austin_server waco_server 4
+
+6
+seattle_server tacoma_server 10
+tacoma_server bellingham_server 10
+bellingham_server spokane_server 10
+spokane_server seattle_server 10
+seattle_server forks 20
+forks tacoma_server 20
+
+6
+washington_dc_server boston_server 50
+boston_server washington_dc_server 50
+washington_dc_server cleveland 50
+cleveland washington_dc_server 50
+boston_server cleveland 50
+cleveland boston_server 50
+
+2
+saint_paul minneapolis_server 30
+minneapolis_server detroit 40
+
+7
+a_server b 10
+b c 10
+c d 10
+d e 1
+a_server f 20
+f g 1
+g d 1
+
+2
+alpha_server beta 5
+beta alpha_server 5
+
+3
+gamma_server delta 7
+epsilon zeta 3
+zeta eta 2
+
+3
+theta_server iota 0
+kappa lambda 8
+mu nu 9
+
+4
+xi_server omicron_server 15
+omicron_server pi_server 15
+pi_server rho_server 15
+rho_server xi_server 15
+
+5
+sigma_server tau 1
+tau upsilon 1
+upsilon phi 1
+phi chi 1
+chi psi 1
+
+5
+omega_server alpha 2
+beta gamma 3
+delta epsilon_server 4
+zeta eta 1
+theta iota 2

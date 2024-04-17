@@ -24,27 +24,28 @@ int main(){
         cin >> from >> to >> delay;
 
         if(nameToIndex.find(from) == nameToIndex.end()){
-            nameToIndex[from] = reverse.size(); //get index to push to 
-            reverse.push_back(from);            //push to reversed list
-            if(from.length() >= 7 && from.substr(from.length() - 7) == "_server"){    //get up to_server
+            nameToIndex[from] = reverse.size();
+            reverse.push_back(from);
+            if(from.length() >= 7 && from.substr(from.length() - 7) == "_server"){
                 serverNames.push_back(nameToIndex[from]);
             }
         }
         if(nameToIndex.find(to) == nameToIndex.end()){
-            nameToIndex[to] = reverse.size(); //get index to push to 
-            reverse.push_back(to);            //push to reversed list
+            nameToIndex[to] = reverse.size();
+            reverse.push_back(to);
             serverNames.push_back(nameToIndex[to]);
         }
         g.addEdge(nameToIndex[from], nameToIndex[to], delay);
     }
 
+    int serversize = serverNames.size();
 
-    for(int i = 0; i < serverNames.size(); i++){
+    for(int i = 0; i < serversize; i++){
         int serverIndex = serverNames[i];
         vector<int> numDelays = g.dijkstra(serverIndex);
         int totalDelay = 0;
         bool isValidServer = true;
-        for(int j = 0; j < serverNames.size(); j++){
+        for(int j = 0; j < serversize; j++){
             if(numDelays[j] == g.INFINITE_COST){
                 isValidServer = false;
                 break;
@@ -62,14 +63,19 @@ int main(){
         }
     }
 
+    int fastestserversize = fastestServers.size();
+
     if(fastestServers.empty()){
-        cout << "no server can serve the whole network." << endl;
+        cout << "no server can serve the whole network" << endl;
     }
     else{
         sort(fastestServers.begin(), fastestServers.end());
         cout << "total delay: " << minDelay << endl;
-        for(int i = 0 ; i < fastestServers.size(); i++){
-            cout << fastestServers[i] << endl;
+        for(int i = 0 ; i < fastestserversize; i++){
+            if(fastestServers[i].length() >= 7 && 
+            fastestServers[i].substr(fastestServers[i].length() - 7) == "_server"){
+                cout << fastestServers[i] << endl;
+            }
         }
     }
 
