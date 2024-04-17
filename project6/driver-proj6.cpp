@@ -30,7 +30,7 @@ int main(){
                 serverNames.push_back(nameToIndex[from]);
             }
         }
-        else if(nameToIndex.find(to) == nameToIndex.end()){
+        if(nameToIndex.find(to) == nameToIndex.end()){
             nameToIndex[to] = reverse.size(); //get index to push to 
             reverse.push_back(to);            //push to reversed list
             serverNames.push_back(nameToIndex[to]);
