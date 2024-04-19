@@ -7,6 +7,14 @@
 
 using namespace std;
 
+/* ArrayHeap
+ *  parameters:
+ *      none
+ *  return value:
+ *      none
+ *
+ *  This function is the default constructor for an empty ArrayHeap.
+ */
 template <typename T>
 ArrayHeap<T>::ArrayHeap(){
     numItems = 0;
@@ -20,6 +28,14 @@ ArrayHeap<T>::ArrayHeap(){
     }
 }
 
+/* ArrayHeap
+ *  parameters:
+ *      h -- given ArrayHeap to copy
+ *  return value:
+ *      none
+ *
+ *  This function is the copy constructor.
+ */
 template <typename T>
 ArrayHeap<T>::ArrayHeap(ArrayHeap<T> const &h){
     numItems = h.numItems;
@@ -40,6 +56,14 @@ ArrayHeap<T>::ArrayHeap(ArrayHeap<T> const &h){
     }
 }
 
+/* ~ArrayHeap
+ *  parameters:
+ *      none
+ *  return value:
+ *      none
+ *
+ *  This function is the destructor.
+ */
 template <typename T>
 ArrayHeap<T>::~ArrayHeap(){
     delete []data;
@@ -51,6 +75,15 @@ ArrayHeap<T>::~ArrayHeap(){
     dataToHeap = nullptr;
 }
 
+/* operator=
+ *  parameters:
+ *      ah -- given heap to copy
+ *  return value:
+ *      none
+ *
+ *  This function makes this object have the same logical structure
+ *  as the given heap, resizing as necessary.
+ */
 template <typename T>
 ArrayHeap<T> const &ArrayHeap<T>::operator=(ArrayHeap<T> const &ah){
     if(this != &ah){
@@ -74,6 +107,15 @@ ArrayHeap<T> const &ArrayHeap<T>::operator=(ArrayHeap<T> const &ah){
     return *this;
 }
 
+/* insert
+ *  parameters:
+ *      item -- given item to insert
+ *  return value:
+ *      none
+ *
+ *  This function inserts the given item into the heap (at the bottom)
+ *  and then restores the heap order property by bubbling up.
+ */
 template <typename T>
 int ArrayHeap<T>::insert(T const &item){
     if(numItems == capacity){
@@ -88,6 +130,15 @@ int ArrayHeap<T>::insert(T const &item){
     return heapAndFreeStack[numItems];
 }
 
+/* removeMinItem
+ *  parameters:
+ *      none
+ *  return value:
+ *      none
+ *
+ *  This function removes the minimum item at the root of the heap,
+ *  places the last element in the root's position, and bubbles down.
+ */
 template <typename T>
 void ArrayHeap<T>::removeMinItem(){
     if(numItems == 0){
@@ -101,21 +152,56 @@ void ArrayHeap<T>::removeMinItem(){
     bubbleDown(0);
 }
 
+/* getMinItem
+ *  parameters:
+ *      none
+ *  return value:
+ *      minimum item in the heap
+ *
+ *  This function returns the minimum item at the top of the heap.
+ */
 template <typename T>
 T const &ArrayHeap<T>::getMinItem() const{
     return data[heapAndFreeStack[0]];
 }
 
+/* getNumItems
+ *  parameters:
+ *      none
+ *  return value:
+ *      number of items in the heap
+ *
+ *  This function returns the number of items that are on the heap.
+ */
 template <typename T>
 int ArrayHeap<T>::getNumItems() const{
     return numItems;
 }
 
+/* isOnHeap
+ *  parameters:
+ *      key -- given key to check if on heap
+ *  return value:
+ *      true if key is on heap, false otherwise
+ *
+ *  This function checks to see if a given key is on the heap.
+ */
 template <typename T>
 bool ArrayHeap<T>::isOnHeap(int key) const{
     return(dataToHeap[key] != -1) && (dataToHeap[key] < numItems);
 }
 
+/* changeItemAtKey
+ *  parameters:
+ *      key -- given index of item to replace
+ *      newItem -- given item to replace the old item
+ *  return value:
+ *      none
+ *
+ *  This function takes a key and a new item, uses the new item
+ *  to replace the old item at data[key], and performs bubble
+ *  operations as necessary to maintain heap order.
+ */
 template <typename T>
 void ArrayHeap<T>::changeItemAtKey(int key, T const &newItem){
     if(isOnHeap(key)){
@@ -129,6 +215,14 @@ void ArrayHeap<T>::changeItemAtKey(int key, T const &newItem){
     }
 }
 
+/* doubleCapacity
+ *  parameters:
+ *      none
+ *  return value:
+ *      none
+ *
+ *  This function doubles the capacity of the heap.
+ */
 template <typename T>
 void ArrayHeap<T>::doubleCapacity(){
     capacity *= 2;
@@ -158,6 +252,15 @@ void ArrayHeap<T>::doubleCapacity(){
     dataToHeap = tempDataToHeap;
 }
 
+/* bubbleUp
+ *  parameters:
+ *      ndx -- given index to start at
+ *  return value:
+ *      none
+ *
+ *  This function starts at the item given by ndx, and moves it up
+ *  the heap towards the root to preserve the heap order property.
+ */
 template <typename T>
 void ArrayHeap<T>::bubbleUp(int ndx){
     if(ndx == 0){
@@ -165,7 +268,7 @@ void ArrayHeap<T>::bubbleUp(int ndx){
     }
 
     int parent = floor((ndx - 1) / 2);
-    
+
     if( data[heapAndFreeStack[ndx]] < data[heapAndFreeStack[parent]]){
         swap(heapAndFreeStack[parent], heapAndFreeStack[ndx]);
         swap(dataToHeap[heapAndFreeStack[parent]], dataToHeap[heapAndFreeStack[ndx]]);
@@ -174,6 +277,15 @@ void ArrayHeap<T>::bubbleUp(int ndx){
     }
 }
 
+/* bubbleDown
+ *  parameters:
+ *      ndx -- given index to start at
+ *  return value:
+ *      none
+ *
+ *  This function starts at the item given by ndx, and moves it down
+ *  the heap towards the leaves to preserve the heap order property.
+ */
 template <typename T>
 void ArrayHeap<T>::bubbleDown(int ndx){
     int size = getNumItems();
@@ -196,11 +308,10 @@ void ArrayHeap<T>::bubbleDown(int ndx){
     if(min != ndx){
         swap(heapAndFreeStack[ndx], heapAndFreeStack[min]);
         swap(dataToHeap[heapAndFreeStack[ndx]], dataToHeap[heapAndFreeStack[min]]);
-        
+
         bubbleDown(min);
     }
 }
-
 
 #endif
 
