@@ -3,10 +3,9 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <sstream>
 
 using namespace std;
-
-const int NUM_NETWORK_LINKS = 4000;
 
 /* main
  *  parameters:
@@ -20,79 +19,74 @@ const int NUM_NETWORK_LINKS = 4000;
  *  The shortest delay time is then output, or that no server can serve the
  *  entire network.
  */
-int main(){
-    Graph g(NUM_NETWORK_LINKS);
+int main() {
     map<string, int> nameToIndex;
-    vector<string> reverse, fastestServers;
-    vector<int> minDelays(reverse.size(), g.INFINITE_COST), serverNames;
+    vector<bool> serverExists;
+    vector<int> delayTimes;
     string from, to;
-    int delay, numVertices, minDelay = g.INFINITE_COST;
-
+    int delay, totalMinTime, numVertices, verticeCount = 0;
+    stringstream inpSS;
 
     cin >> numVertices;
-    
 
-    for(int i = 0; i < numVertices; i++){
+    for (int i = 0; i < numVertices; i++) {
         cin >> from >> to >> delay;
+        inpSS << from << " " << to << " " << delay << endl;
 
-        if(nameToIndex.find(from) == nameToIndex.end()){
-            nameToIndex[from] = reverse.size();
-            reverse.push_back(from);
-            if(from.length() >= 7 && from.substr(from.length() - 7) == "_server"){
-                serverNames.push_back(nameToIndex[from]);
-            }
+        if (nameToIndex.find(from) == nameToIndex.end()) {
+            int index = nameToIndex.size();
+            nameToIndex[from] = index;
+            serverExists.push_back(from.size() >= 7 && from.substr(from.size() - 7) == "_server");
         }
-        if(nameToIndex.find(to) == nameToIndex.end()){
-            nameToIndex[to] = reverse.size();
-            reverse.push_back(to);
-            serverNames.push_back(nameToIndex[to]);
+
+        if (nameToIndex.find(to) == nameToIndex.end()) {
+            int index = nameToIndex.size();
+            nameToIndex[to] = index;
+            serverExists.push_back(to.size() >= 7 && to.substr(to.size() - 7) == "_server");
         }
+    }
+
+    Graph g(nameToIndex.size());
+
+    for (int i = 0; i < numVertices; i++) {
+        inpSS >> from >> to >> delay;
         g.addEdge(nameToIndex[from], nameToIndex[to], delay);
     }
 
-    int serversize = serverNames.size();
+    delayTimes.resize(serverExists.size(), g.INFINITE_COST);
+    totalMinTime = g.INFINITE_COST;
 
-    for(int i = 0; i < serversize; i++){
-        int serverIndex = serverNames[i];
-        vector<int> numDelays = g.dijkstra(serverIndex);
-        int totalDelay = 0;
-        bool isValidServer = true;
-        for(int j = 0; j < serversize; j++){
-            if(numDelays[j] == g.INFINITE_COST){
-                isValidServer = false;
-                break;
+    for (int i = 0; i < serverExists.size(); i++) {
+        if (serverExists[i]) {
+            vector<int> numDelays = g.dijkstra(i);
+            int serverDelay = 0;
+            bool validServer = true;
+
+            for (int j = 0; j < numDelays.size(); j++) {
+                if (numDelays[j] == g.INFINITE_COST) {
+                    validServer = false;
+                    break;
+                }
+                serverDelay += numDelays[j];
             }
-            totalDelay += numDelays[j];
-        }
 
-        if(isValidServer && totalDelay < minDelay){
-            minDelay = totalDelay;
-            fastestServers.clear();
-            fastestServers.push_back(reverse[serverIndex]);
-        }
-        else if(isValidServer && totalDelay == minDelay){
-            fastestServers.push_back(reverse[serverIndex]);
+            if (validServer) {
+                delayTimes[i] = serverDelay;
+                totalMinTime = min(totalMinTime, serverDelay);
+            }
         }
     }
 
-    int fastestserversize = fastestServers.size();
-
-    if(fastestServers.empty()){
+    if (totalMinTime == g.INFINITE_COST) {
         cout << "no server can serve the whole network" << endl;
-    }
-    else{
-        sort(fastestServers.begin(), fastestServers.end());
-        cout << "total delay: " << minDelay << endl;
-        for(int i = 0 ; i < fastestserversize; i++){
-            if(fastestServers[i].length() >= 7 && 
-            fastestServers[i].substr(fastestServers[i].length() - 7) == "_server"){
-                cout << fastestServers[i] << endl;
+    } else {
+        cout << "total delay: " << totalMinTime << endl;
+        for (map<string, int>::iterator it = nameToIndex.begin(); it != nameToIndex.end(); ++it) {
+            if (serverExists[it->second] && delayTimes[it->second] == totalMinTime) {
+                cout << it->first << endl;
             }
         }
     }
-
-
 
     return 0;
-
 }
