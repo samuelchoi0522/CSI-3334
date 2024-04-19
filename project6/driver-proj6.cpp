@@ -8,6 +8,18 @@ using namespace std;
 
 const int NUM_NETWORK_LINKS = 4000;
 
+/* main
+ *  parameters:
+ *      none
+ *  return value:
+ *      0 (indicating a successful run)
+ *
+ *  This function reads in a description of an existing network. Vertices
+ *  are added to the graph and the server names are tracked. Then, the
+ *  total delay for each server is calculated to find the fastest server.
+ *  The shortest delay time is then output, or that no server can serve the
+ *  entire network.
+ */
 int main(){
     Graph g(NUM_NETWORK_LINKS);
     map<string, int> nameToIndex;
