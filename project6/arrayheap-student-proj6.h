@@ -122,12 +122,14 @@ int ArrayHeap<T>::insert(T const &item){
         doubleCapacity();
     }
 
+    int n = heapAndFreeStack[numItems];
+
     data[heapAndFreeStack[numItems]] = item;
     dataToHeap[heapAndFreeStack[numItems]] = numItems;
     bubbleUp(numItems);
 
     numItems++;
-    return heapAndFreeStack[numItems];
+    return n;
 }
 
 /* removeMinItem

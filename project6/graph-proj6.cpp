@@ -53,7 +53,8 @@ vector<int> Graph::dijkstra(int source) const{
 
                 if (!frontier.isOnHeap(keys[v])) {
                     keys[v] = frontier.insert(make_pair(distanceList[v], v));
-                } else {
+                } 
+                else {
                     frontier.changeItemAtKey(keys[v], make_pair(distanceList[v], v));
                 }
             }
