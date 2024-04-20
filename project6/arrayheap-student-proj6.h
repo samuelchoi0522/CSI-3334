@@ -188,7 +188,14 @@ int ArrayHeap<T>::getNumItems() const{
  */
 template <typename T>
 bool ArrayHeap<T>::isOnHeap(int key) const{
-    return(dataToHeap[key] != -1) && (dataToHeap[key] < numItems);
+    if (key >= 0 && key < capacity) {
+        if (dataToHeap[key] >= 0 && dataToHeap[key] < numItems) {
+            if (heapAndFreeStack[dataToHeap[key]] == key) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 /* changeItemAtKey
@@ -267,11 +274,11 @@ void ArrayHeap<T>::bubbleUp(int ndx){
         return;
     }
 
-    int parent = floor((ndx - 1) / 2);
+    int parent = (ndx - 1) / 2;
 
     if( data[heapAndFreeStack[ndx]] < data[heapAndFreeStack[parent]]){
-        swap(heapAndFreeStack[parent], heapAndFreeStack[ndx]);
-        swap(dataToHeap[heapAndFreeStack[parent]], dataToHeap[heapAndFreeStack[ndx]]);
+        swap(dataToHeap[heapAndFreeStack[ndx]], dataToHeap[heapAndFreeStack[parent]]);
+        swap(heapAndFreeStack[ndx], heapAndFreeStack[parent]);
 
         bubbleUp(parent);
     }
@@ -298,21 +305,20 @@ void ArrayHeap<T>::bubbleDown(int ndx){
 
     int min = ndx;
 
-    if(data[heapAndFreeStack[left]] < data[heapAndFreeStack[ndx]] ){
-        min = left;
-    }
-    if((right < size) && (data[heapAndFreeStack[right]] < data[heapAndFreeStack[min]])){
-        min = right;
-    }
+    if(left < size){
+        int lesserChild = left;
 
-    if(min != ndx){
-        swap(heapAndFreeStack[ndx], heapAndFreeStack[min]);
-        swap(dataToHeap[heapAndFreeStack[ndx]], dataToHeap[heapAndFreeStack[min]]);
+        if((right < numItems) && (data[heapAndFreeStack[right]] < data[heapAndFreeStack[left]])){
+            lesserChild = right;
+        }
 
-        bubbleDown(min);
+        if(data[heapAndFreeStack[lesserChild]] < data[heapAndFreeStack[ndx]]){
+            swap(dataToHeap[heapAndFreeStack[ndx]], dataToHeap[heapAndFreeStack[lesserChild]]);
+            swap(heapAndFreeStack[ndx], heapAndFreeStack[lesserChild]);
+            bubbleDown(lesserChild);
+        }
     }
 }
 
 #endif
-
 

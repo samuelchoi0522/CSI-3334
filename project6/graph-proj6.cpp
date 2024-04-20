@@ -31,28 +31,33 @@ void Graph::addEdge(int from, int to, int cost){
  *  graph.
  */
 vector<int> Graph::dijkstra(int source) const{
-    vector<int> dist(adjacencyList.size(), INFINITE_COST);
-    dist[source] = 0;
+    const int numVertices = adjacencyList.size();
+    vector<int> distanceList(numVertices, INFINITE_COST), keys(numVertices, -1);
+    ArrayHeap<pair<int, int> > frontier;
+    pair<int, int> sourcePair = make_pair(0, source);
 
-    ArrayHeap<pair<int,int> > pq;
+    distanceList[source] = 0;
 
-    pq.insert(make_pair(0, source));
+    keys[source] = frontier.insert(sourcePair);
 
-    while(pq.getNumItems() != 0){
-        int u = pq.getMinItem().second;
-        pq.removeMinItem();
+    while (frontier.getNumItems() != 0) {
+        int u = frontier.getMinItem().second;
+        frontier.removeMinItem();
 
-        for(list<Edge>::const_iterator i = adjacencyList[u].begin();
-            i != adjacencyList[u].end(); i++){
+        for(list<Edge>::const_iterator i = adjacencyList[u].begin(); i != adjacencyList[u].end(); i++){
             int v = i->to;
             int weight = i->cost;
 
-            if(dist[v] > dist[u] + weight){
-                dist[v] = dist[u] + weight;
-                pq.insert(make_pair(dist[v], v));
+            if (distanceList[u] + weight < distanceList[v]) {
+                distanceList[v] = weight + distanceList[u];
+
+                if (!frontier.isOnHeap(keys[v])) {
+                    keys[v] = frontier.insert(make_pair(distanceList[v], v));
+                } else {
+                    frontier.changeItemAtKey(keys[v], make_pair(distanceList[v], v));
+                }
             }
         }
     }
-
-    return dist;
+    return distanceList;
 }
